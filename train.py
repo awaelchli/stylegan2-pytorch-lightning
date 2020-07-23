@@ -284,7 +284,7 @@ class StyleGAN2(LightningModule):
 
     def training_step(self, batch, batch_idx, optimizer_idx):
         args = self.hparams
-        d_regularize = (batch_idx % self.hparams.d_reg_every == 0)
+        d_regularize = (batch_idx % args.d_reg_every == 0)
         g_regularize = (batch_idx % args.g_reg_every == 0)
         real_img = batch
         result = None
@@ -296,20 +296,23 @@ class StyleGAN2(LightningModule):
             accumulate(self.g_ema, self.generator, self.accum)
 
         if batch_idx % args.img_log_frequency == 0:
-            with torch.no_grad():
-                self.g_ema.eval()
-                sample, _ = self.g_ema([self.sample_z])
-                grid = utils.make_grid(
-                    sample,
-                    nrow=int(args.n_sample ** 0.5),
-                    normalize=True,
-                    range=(-1, 1),
-                )
-                self.logger.experiment.log({
-                    'examples': [wandb.Image(grid.cpu())],
-                }, commit=False)
+            self.log_sample_image()
 
         return result
+
+    @torch.no_grad
+    def log_sample_image(self):
+        self.g_ema.eval()
+        sample, _ = self.g_ema([self.sample_z])
+        grid = utils.make_grid(
+            sample,
+            nrow=int(self.hparams.n_sample ** 0.5),
+            normalize=True,
+            range=(-1, 1),
+        )
+        self.logger.experiment.log({
+            'examples': [wandb.Image(grid.cpu())],
+        }, commit=False)
 
 
 def main(args):
