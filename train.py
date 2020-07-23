@@ -309,8 +309,6 @@ class StyleGAN2(LightningModule):
                     'examples': [wandb.Image(grid.cpu())],
                 }, commit=False)
 
-        self.print(result['loss'])
-
         return result
 
 
