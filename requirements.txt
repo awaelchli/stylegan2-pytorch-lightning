@@ -1,0 +1,7 @@
+lmdb==0.98
+numpy==1.18.5
+Pillow==7.1.2
+pytorch-lightning==0.8.4
+torch==1.5.1
+torchvision==0.6.0a0+35d732a
+wandb==0.9.2
