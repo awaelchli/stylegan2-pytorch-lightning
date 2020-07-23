@@ -300,7 +300,7 @@ class StyleGAN2(LightningModule):
 
         return result
 
-    @torch.no_grad
+    @torch.no_grad()
     def log_sample_image(self):
         self.g_ema.eval()
         sample, _ = self.g_ema([self.sample_z])
@@ -316,7 +316,8 @@ class StyleGAN2(LightningModule):
 
 
 def main(args):
-    seed_everything(234)
+    if args.seed:
+        seed_everything(args.seed)
     model = StyleGAN2(args)
     logger = WandbLogger(project='stylegan2')
     trainer = Trainer.from_argparse_args(
@@ -328,6 +329,7 @@ def main(args):
 
 
 if __name__ == '__main__':
+    # python train.py --gpus 2 --batch_size 2 /home/adrian/data/ffhq/lmdb_data --distributed_backend ddp --size 128
     parser = argparse.ArgumentParser()
     parser.add_argument("path", type=str)
     parser.add_argument("--batch_size", type=int, default=16)
@@ -347,7 +349,7 @@ if __name__ == '__main__':
     parser.add_argument("--ada_length", type=int, default=500 * 1000)
     parser.add_argument("--img_log_frequency", type=int, default=100)
     parser.add_argument("--num_workers", type=int, default=8)
+    parser.add_argument("--seed", type=int)
     parser = Trainer.add_argparse_args(parser)
     params = parser.parse_args()
     main(params)
-
