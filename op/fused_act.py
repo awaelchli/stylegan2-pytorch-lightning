@@ -71,42 +71,42 @@ class FusedLeakyReLUFunction(Function):
         return grad_input, grad_bias, None, None
 
 
-# class FusedLeakyReLU(nn.Module):
-#     def __init__(self, channel, negative_slope=0.2, scale=2 ** 0.5):
-#         super().__init__()
-#
-#         self.bias = nn.Parameter(torch.zeros(channel))
-#         self.negative_slope = negative_slope
-#         self.scale = scale
-#
-#     def forward(self, input):
-#         return fused_leaky_relu(input, self.bias, self.negative_slope, self.scale)
-#
-#
-# def fused_leaky_relu(input, bias, negative_slope=0.2, scale=2 ** 0.5):
-#     return FusedLeakyReLUFunction.apply(input, bias, negative_slope, scale)
-
-
 class FusedLeakyReLU(nn.Module):
-    """
-    Original code by Adam Bielski, University of Bern, 2020.
-    """
     def __init__(self, channel, negative_slope=0.2, scale=2 ** 0.5):
         super().__init__()
 
         self.bias = nn.Parameter(torch.zeros(channel))
         self.negative_slope = negative_slope
         self.scale = scale
-        self.act = nn.LeakyReLU(self.negative_slope)
 
     def forward(self, input):
-        if input.ndim == 2:
-            return self.scale * self.act(input + self.bias)
-        elif input.ndim == 4:
-            b = self.bias.view(1, -1, 1, 1)
-            return self.scale * self.act(input + b)
+        return fused_leaky_relu(input, self.bias, self.negative_slope, self.scale)
 
 
 def fused_leaky_relu(input, bias, negative_slope=0.2, scale=2 ** 0.5):
-    out = nn.functional.leaky_relu(input + bias, negative_slope=negative_slope)
-    return scale * out
+    return FusedLeakyReLUFunction.apply(input, bias, negative_slope, scale)
+
+
+# class FusedLeakyReLU(nn.Module):
+#     """
+#     Original code by Adam Bielski, University of Bern, 2020.
+#     """
+#     def __init__(self, channel, negative_slope=0.2, scale=2 ** 0.5):
+#         super().__init__()
+#
+#         self.bias = nn.Parameter(torch.zeros(channel))
+#         self.negative_slope = negative_slope
+#         self.scale = scale
+#         self.act = nn.LeakyReLU(self.negative_slope)
+#
+#     def forward(self, input):
+#         if input.ndim == 2:
+#             return self.scale * self.act(input + self.bias)
+#         elif input.ndim == 4:
+#             b = self.bias.view(1, -1, 1, 1)
+#             return self.scale * self.act(input + b)
+#
+#
+# def fused_leaky_relu(input, bias, negative_slope=0.2, scale=2 ** 0.5):
+#     out = nn.functional.leaky_relu(input + bias, negative_slope=negative_slope)
+#     return scale * out
