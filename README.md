@@ -25,4 +25,4 @@ Train on 4 gpus on images of size 128x128 and an effective batch size of 8 (2 ba
 python train.py /path/to/lmdb_data --gpus 4 --batch_size 2 --size 128
 ```
 
-To achieve deterministic results between runs, pass the flags `--seed SEED_VALUE` and `--deterministic 1`.
+To achieve determinism between runs, pass the flags `--seed SEED_VALUE` and `--deterministic 1`.
