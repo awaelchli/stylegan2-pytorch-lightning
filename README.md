@@ -20,6 +20,9 @@ Follow the steps in the [original repository](https://github.com/rosinality/styl
 ## Example Usage
 
 Train on 4 gpus on images of size 128x128 and an effective batch size of 8 (2 batches per GPU)
+
 ```bash
 python train.py --gpus 4 --batch_size 2 /path/to/lmdb_data --size 128
 ```
+
+To achieve deterministic results between runs, pass the flags `--seed SEED_VALUE` and `--deterministic 1`.
