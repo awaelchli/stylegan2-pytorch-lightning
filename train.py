@@ -329,7 +329,6 @@ def main(args):
 
 
 if __name__ == '__main__':
-    # python train.py --gpus 2 --batch_size 2 /home/adrian/data/ffhq/lmdb_data --distributed_backend ddp --size 128
     parser = argparse.ArgumentParser()
     parser.add_argument("path", type=str)
     parser.add_argument("--batch_size", type=int, default=16)
@@ -351,5 +350,6 @@ if __name__ == '__main__':
     parser.add_argument("--num_workers", type=int, default=8)
     parser.add_argument("--seed", type=int)
     parser = Trainer.add_argparse_args(parser)
+    parser.set_defaults(distributed_backend="ddp")
     params = parser.parse_args()
     main(params)
